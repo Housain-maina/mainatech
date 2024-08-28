@@ -1,0 +1,40 @@
+---
+title: 'How to Add Interactive Swagger Documentation with API Versioning to a Django Rest Framework API'
+date: '2024-08-27'
+tags: ['django', 'djangorestframework', 'documentation']
+draft: true
+summary: 'Learn how to add interactive swagger documentation with API versioning to your DRF API, making it easier to keep track of changes and interact with the API.'
+---
+
+# Introduction
+
+An API is like a contract between a provider and a consumer. Adding versioning to the API makes sure that consumers know when things change or break.
+
+While an interactive documentation makes it easier to interact with the API in a web browser.
+
+In this article, I'm going to teach you every thing you need to know in order to start adding documentation and versioning to your DRF API.
+
+# Pre-requisite
+
+To follow along with this tutorial, basic knowledge of building RESTful APIs with Django Rest Framework is required.
+
+# Swagger Documentation
+
+We are going to start with adding swagger documentation to our DRF API. I created a sample project you can use to follow along if you don't have one [sample project](https://github.com/Housain-maina/python-code-snippets/tree/main/django_apps/drf_swagger_docs_versioning).
+
+## Step 1: Installing Dependencies
+
+We'll be using `drf_spectacular`, a django package that makes it easier to add swagger documentation and automatically generates json and yaml schema.
+
+```
+pip install drf_spectacular
+```
+
+Add `drf_spectacular` to INSTALLED_APPS list
+
+```py:settings.py
+INSTALLED_APPS = [
+    # ALL YOUR APPS
+    'drf_spectacular',
+]
+```
