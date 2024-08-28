@@ -208,7 +208,7 @@ Edit the layout in `app` or content in `data`. With live reloading, the pages au
 
 `data/headerNavLinks.js` - navigation links.
 
-`data/logo.svg` - replace with your own logo.
+`data/logo.png` - replace with your own logo.
 
 `data/blog` - replace with your own blog posts.
 
@@ -292,13 +292,13 @@ See [Next.js on Netlify](https://docs.netlify.com/integrations/frameworks/next-j
 Run:
 
 ```sh
-$ EXPORT=1 UNOPTIMIZED=1 yarn build
+EXPORT=1 UNOPTIMIZED=1 yarn build
 ```
 
 Then, deploy the generated `out` folder or run `npx serve out` it locally.
 
 > [!IMPORTANT]
-> If deploying with a URL base path, like https://example.org/myblog you need an extra `BASE_PATH` shell-var to the build command:
+> If deploying with a URL base path, like <https://example.org/myblog> you need an extra `BASE_PATH` shell-var to the build command:
 >
 > ```sh
 > $ EXPORT=1 UNOPTIMIZED=1 BASE_PATH=/myblog yarn build
