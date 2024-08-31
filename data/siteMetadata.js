@@ -10,7 +10,7 @@ const siteMetadata = {
   siteUrl: 'https://mainatech.com.ng',
   siteRepo: '',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
-  socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.JPEG`,
+  socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'hussainmaina27@gmail.com',
   github: 'https://github.com/Housain-maina',
