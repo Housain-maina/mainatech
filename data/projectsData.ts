@@ -8,7 +8,7 @@ interface Project {
 const projectsData: Project[] = [
   {
     title: 'Engausa Academy',
-    description: `Engausa Academy is a multilingual e-learning platform (mobile & web) I single handedly built from scratch for an education institution that offers skills development courses in areas such as Solar Energy System Installation, Electric Fencing, CCTV Camera Installation & Maintenance, Electric Wiring, Graphic Design, Animation and more. I still maintain this project.`,
+    description: `Engausa Academy is a multilingual e-learning platform (mobile & web) I single handedly built from scratch in 2022, for an Engausa Global Tech Hub. An Educational institution that offers skills development courses in areas such as Solar Energy System Installation, Electric Fencing, CCTV Camera Installation & Maintenance, Electric Wiring, Graphic Design, Animation and more. I also still maintain this project to this date.`,
     imgSrc: '/static/images/engausa-academy.jpeg',
     href: 'https://www.engausaacademy.com',
   },
@@ -20,7 +20,7 @@ const projectsData: Project[] = [
   },
   {
     title: 'Drf-Logto',
-    description: `Integration for Logto Authentication with Django Rest Framework. Has support for JWT based authentication. Currently under development, so use with caution.`,
+    description: `Open Source django app for integrating Logto Authentication with Django Rest Framework. Has support for JWT based authentication, support for Session auth coming soon. Currently under development, so use with caution.`,
     imgSrc: '/static/images/logto.jpg',
     href: 'https://github.com/housain-maina/drf-logto',
   },
