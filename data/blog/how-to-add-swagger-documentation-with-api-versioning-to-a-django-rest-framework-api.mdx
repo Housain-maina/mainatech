@@ -2,7 +2,7 @@
 title: 'How to Add Interactive Swagger Documentation with API Versioning to a Django Rest Framework API'
 date: '2024-08-27'
 tags: ['django', 'djangorestframework', 'documentation']
-draft: true
+draft: false
 summary: 'Learn how to add interactive swagger documentation with API versioning to your DRF API, making it easier to keep track of changes and interact with the API.'
 ---
 
@@ -20,14 +20,14 @@ To follow along with this tutorial, basic knowledge of building RESTful APIs wit
 
 # Swagger Documentation
 
-We are going to start with adding swagger documentation to our DRF API. I created a sample project you can use to follow along if you don't have one [sample project](https://github.com/Housain-maina/python-code-snippets/tree/main/django_apps/drf_swagger_docs_versioning).
+We are going to start with adding swagger documentation to our DRF API. I created a [sample project](https://github.com/Housain-maina/python-code-snippets/tree/main/django_apps/drf_swagger_docs_versioning) you can use to follow along if you don't have one.
 
-## Step 1: Installing Dependencies
+## Installing Dependencies
 
-We'll be using `drf_spectacular`, a django package that makes it easier to add swagger documentation and automatically generates json and yaml schema.
+We'll be using `drf-spectacular`, a django package that makes it easier to add swagger documentation and automatically generates json and yaml schema.
 
 ```
-pip install drf_spectacular
+pip install drf-spectacular
 ```
 
 Add `drf_spectacular` to INSTALLED_APPS list
@@ -38,3 +38,109 @@ INSTALLED_APPS = [
     'drf_spectacular',
 ]
 ```
+
+Set DRF `DEFAULT_SCHEMA_CLASS` to `drf_spectacular.openapi.AutoSchema`
+
+```py: settings.py
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+```
+
+`drf_spectacular` comes pre-configured with some default settings, so you don't need to specify any settings before it works, but we are going customize it fit our use case. Have a look at the [available settings](https://drf-spectacular.readthedocs.io/en/latest/settings.html).
+
+```py:settings.py
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'My DRF API',
+    'DESCRIPTION': 'My Spectacular API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+```
+
+## Usage
+
+Include `drf_spectacular` views in your projects `urls.py`.
+
+```py:project/urls.py
+from django.urls import path, include
+from drf_spectacular.views import SpectacularSwaggerView, SpectacularJSONAPIView
+
+urlpatterns = [
+    # OTHER PATHS
+    path("schema.json", SpectacularJSONAPIView.as_view(), name="schema"),
+    path(
+        "docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+]
+```
+
+Now when you visit `/docs` page, you should be able to see a generated swagger docs that is based on your seralizers.
+
+![Swagger Docs](/public/static/images/blog/swagger.JPEG)
+
+An OpenAPI JSON schema is also available at `/schema.json`, which you can use for multiple purposes, one of which is generating SDKs to interact with your API in almost any programming language.
+
+If you're unable to access the docs, you'll need to install `drf-spectacular[sidecar]`, you can read more about it [here](https://drf-spectacular.readthedocs.io/en/latest/readme.html#self-contained-ui-installation).
+
+```py
+pip install drf-spectacular[sidecar]
+```
+
+```py:settings.py
+INSTALLED_APPS = [
+    # ALL YOUR APPS
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
+]
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "My DRF API",
+    "DESCRIPTION": "My Spectacular API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+}
+
+```
+
+## Customization
+
+There are multiple ways you can customize the generated schema for an endpoint, but we will focus on using the `extend_schema_view` and `extend_schema` decorators. You can read learn more about customization [here](https://drf-spectacular.readthedocs.io/en/latest/customization.html).
+
+The following code will add description to our /smartphones/ endpoint.
+
+```py:views.py
+from .serializers import PhoneSerializer
+from .models import Phone
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import ListModelMixin
+from drf_spectacular.utils import extend_schema_view, extend_schema
+
+
+@extend_schema_view(list=extend_schema(description="List of smartphones."))
+class PhoneViewSet(GenericViewSet, ListModelMixin):
+    queryset = Phone.objects.all()
+    serializer_class = PhoneSerializer
+
+```
+
+You can also use `extend_schema` to customize individual view methods.
+
+```py:views.py
+class PhoneViewSet(GenericViewSet, ListModelMixin):
+    queryset = Phone.objects.all()
+    serializer_class = PhoneSerializer
+
+    @extend_schema(description="List of smartphones.")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+```
+
+# Versioning
