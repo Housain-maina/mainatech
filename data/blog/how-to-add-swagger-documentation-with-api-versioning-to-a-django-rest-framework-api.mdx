@@ -1,9 +1,10 @@
 ---
 title: 'How to Add Interactive Swagger Documentation with API Versioning to a Django Rest Framework API'
 date: '2024-08-27'
-tags: ['django', 'djangorestframework', 'documentation']
+tags: ['django', 'djangorestframework', 'documentation', 'engineering']
 draft: false
 summary: 'Learn how to add interactive swagger documentation with API versioning to your DRF API, making it easier to keep track of changes and interact with the API.'
+lastmod: '2024-09-04'
 ---
 
 # Introduction
@@ -48,7 +49,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-`drf_spectacular` comes pre-configured with some default settings, so you don't need to specify any settings before it works, but we are going customize it fit our use case. Have a look at the [available settings](https://drf-spectacular.readthedocs.io/en/latest/settings.html).
+`drf-spectacular` comes pre-configured with some default settings, so you don't need to specify any settings before it works, but we are going customize it fit our use case. Have a look at the [available settings](https://drf-spectacular.readthedocs.io/en/latest/settings.html).
 
 ```py:settings.py
 SPECTACULAR_SETTINGS = {
@@ -62,7 +63,7 @@ SPECTACULAR_SETTINGS = {
 
 ## Usage
 
-Include `drf_spectacular` views in your projects `urls.py`.
+Add `drf_spectacular` views to your project's `urls.py`.
 
 ```py:project/urls.py
 from django.urls import path, include
@@ -79,13 +80,13 @@ urlpatterns = [
 ]
 ```
 
-Now when you visit `/docs` page, you should be able to see a generated swagger docs that is based on your seralizers.
+Now when you visit `/docs` page, you will see a generated swagger docs that is based on your seralizers.
 
 ![Swagger Docs](/static/images/blog/swagger.JPEG)
 
 An OpenAPI JSON schema is also available at `/schema.json`, which you can use for multiple purposes, one of which is generating SDKs to interact with your API in almost any programming language.
 
-If you're unable to access the docs, you'll need to install `drf-spectacular[sidecar]`, you can read more about it [here](https://drf-spectacular.readthedocs.io/en/latest/readme.html#self-contained-ui-installation).
+If you're unable to access the docs, you'll need to install `drf-spectacular[sidecar]`, you can read more about why you have to do that [here](https://drf-spectacular.readthedocs.io/en/latest/readme.html#self-contained-ui-installation).
 
 ```py
 pip install drf-spectacular[sidecar]
@@ -144,3 +145,164 @@ class PhoneViewSet(GenericViewSet, ListModelMixin):
 ```
 
 # Versioning
+
+Django Rest Framework provides out of the box solution for adding versioning to an API, and there are 5 different ways you can set it up, which are referred to as 'versioning schemes' in the [official documentation](https://www.django-rest-framework.org/api-guide/versioning/).
+
+The 5 versioning schemes are:
+
+### 1. URLPathVersioning
+
+Expects the version to be include as part of the URL path.
+
+```
+GET /v1/smartphones/ HTTP/1.1
+Host: myapi.com
+Accept: application/json
+```
+
+### 2. NamespaceVersioning
+
+Thesame as URLPathVersioning, the only difference is how it is [configured](https://www.django-rest-framework.org/api-guide/versioning/#namespaceversioning) using namespace.
+
+### 3. AcceptHeaderVersioning
+
+Expects the client to specify the version in the `Accept` header.
+
+```
+GET /smartphones/ HTTP/1.1
+Host: myapi.com
+Accept: application/json; version=1.0
+```
+
+### 4. HostNameVersioning
+
+Expects the client to specify the version as part of the hostname in the URL.
+
+```
+GET /smartphones/ HTTP/1.1
+Host: v1.myapi.com
+Accept: application/json
+```
+
+### 5. QueryParameterVersioning
+
+Expects the client to specify the version as a query parameter in the URL path.
+
+```
+GET /smartphones/?version=1.0 HTTP/1.1
+Host: myapi.com
+Accept: application/json
+```
+
+In this tutorial we are going to show you how to setup URLPathVersioning, which I believe is the easiest to setup.
+
+### Configuration & Usage
+
+```py:settings.py
+REST_FRAMEWORK = {
+    # OTHER SETTINGS
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSION": "v1",
+    "ALLOWED_VERSIONS": ["v1"],
+}
+```
+
+```py:project/urls.py
+urlpatterns = [
+    # OTHER URLS
+    path("v1/smartphones/", include("smartphones.urls")),
+]
+
+```
+
+When you visit /v1/smartphones/, it'll return a list of smartphones just like before but with the version included in the path.
+
+Now let's see how to add another version of our API, we'll call it `v2`.
+
+To achieve that, we are going to do the following:
+
+1. Create a new ViewSet which we're going to use for our /v2/smartphones/ endpoints.
+2. Rename `smartphones/urls.py` to `smartphones/v1_urls.py`.
+3. Create a new file `smartphones/v2_urls.py` and add paths to it.
+4. Add `v2` to ALLOWED_VERSIONS list.
+
+```py:smartphones/views.py
+from .serializers import PhoneSerializer
+from .models import Phone
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from drf_spectacular.utils import extend_schema_view, extend_schema
+
+
+@extend_schema_view(list=extend_schema(description="List of smartphones."))
+class PhoneViewSet(GenericViewSet, ListModelMixin):
+    queryset = Phone.objects.all()
+    serializer_class = PhoneSerializer
+
+
+class PhoneV2ViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
+    queryset = Phone.objects.all()
+    serializer_class = PhoneSerializer
+
+    @extend_schema(description="List of smartphones.")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(description="Retrieve a smartphone.")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+```
+
+```py:smartphones/v2_urls.py
+from rest_framework.routers import DefaultRouter
+from .views import PhoneV2ViewSet
+from django.urls import path, include
+
+router = DefaultRouter()
+
+router.register("", PhoneV2ViewSet, basename="phones")
+
+urlpatterns = [
+    path("", include(router.urls)),
+]
+
+```
+
+Then include it in your project's `project/urls.py`:
+
+```py:project/urls.py
+
+urlpatterns = [
+    # OTHER URLS
+    path("v1/smartphones/", include("smartphones.v1_urls")),
+    path("v2/smartphones/", include("smartphones.v2_urls")),
+]
+```
+
+```py:settings.py
+REST_FRAMEWORK = {
+    # OTHER SETTINGS
+    "ALLOWED_VERSIONS": ["v1", "v2"],
+}
+
+```
+
+Now when you visit the docs page, you'll see 2 new smartphone endpoints grouped together under `v2`.
+
+![Swagger docs versioned](/static/images/blog/drf-swagger-2.png)
+
+What if we want to group our endpoints based on the respective apps they belong to, instead of the version string?
+All we have to do is add `SCHEMA_PATH_PREFIX` to `drf-spectacular settings`.
+
+```py:settings.py
+SPECTACULAR_SETTINGS = {
+    # Other Settings
+    "SCHEMA_PATH_PREFIX": "/v(?P<version>[0-9]+)/",
+}
+```
+
+![Swagger docs grouped by app](/static/images/blog/drf-swagger-grouped.png)
+
+That's how you add interactive docs with versioning to your DRF API.
+
+Source code for the [final project](http://github.com/Housain-maina/python-code-snippets/django_apps/drf_swagger_docs_final) is available on github.
