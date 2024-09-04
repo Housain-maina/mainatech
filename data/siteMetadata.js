@@ -4,11 +4,11 @@ const siteMetadata = {
   author: 'Hussaini Usman',
   headerTitle: 'Mainatech',
   description:
-    'Mainatech is the portfolio and tech blog website of Hussaini Maina Usman, a Software Engineer with 4 years of Professional Experience.',
+    'Mainatech is the personal website of Hussaini Usman, a Professional Software Engineer with experience in building backend systems and mobile applications.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://mainatech.com.ng',
-  siteRepo: '',
+  siteRepo: 'https://github.com/Housain-maina',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: 'https://mastodon.social/@mastodonuser',
