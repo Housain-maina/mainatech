@@ -14,7 +14,7 @@ const siteMetadata = {
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'hussainmaina27@gmail.com',
   github: 'https://github.com/Housain-maina',
-  x: '',
+  x: 'https://x.com/hmaina0',
   facebook: '',
   youtube: '',
   linkedin: 'https://www.linkedin.com/in/hussainiusman/',
@@ -50,7 +50,7 @@ const siteMetadata = {
   newsletter: {
     // supports mailchimp, buttondown, convertkit, klaviyo, revue, emailoctopus
     // Please add your .env file and modify it according to your selection
-    provider: 'buttondown',
+    provider: 'convertkit',
   },
   comments: {
     // If you want to use an analytics provider you have to add it to the
