@@ -14,7 +14,7 @@ const siteMetadata = {
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'hussainmaina27@gmail.com',
   github: 'https://github.com/Housain-maina',
-  x: 'https://x.com/hmaina0',
+  x: 'https://x.com/hmainatech',
   facebook: '',
   youtube: '',
   linkedin: 'https://www.linkedin.com/in/hussainiusman/',
