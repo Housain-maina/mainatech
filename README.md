@@ -1,6 +1,6 @@
 ![tailwind-nextjs-banner](/public/static/images/twitter-card.png)
 
-# Tailwind Nextjs Starter Blog
+# Mainatech Blog
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/timlrx/tailwind-nextjs-starter-blog?style=social)](https://GitHub.com/timlrx/tailwind-nextjs-starter-blog/stargazers/)
 [![GitHub forks](https://img.shields.io/github/forks/timlrx/tailwind-nextjs-starter-blog?style=social)](https://GitHub.com/timlrx/tailwind-nextjs-starter-blog/network/)
@@ -301,7 +301,7 @@ Then, deploy the generated `out` folder or run `npx serve out` it locally.
 > If deploying with a URL base path, like <https://example.org/myblog> you need an extra `BASE_PATH` shell-var to the build command:
 >
 > ```sh
-> $ EXPORT=1 UNOPTIMIZED=1 BASE_PATH=/myblog yarn build
+> EXPORT=1 UNOPTIMIZED=1 BASE_PATH=/myblog yarn build
 > ```
 >
 > => In your code, `${process.env.BASE_PATH || ''}/robots.txt` will print `"/myblog/robots.txt"` in the `out` build (or only `/robots.txt` if `yarn dev`, ie: on localhost:3000)
